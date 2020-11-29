@@ -17,7 +17,9 @@ class Board:
     _adjacency = {}
     _walled = {}
 
-    def __init__(self, cols, rows):
+    def __init__(self):
+        cols = 16
+        rows = 16
         self._size = (cols, rows)
         self._grid = [[0 for i in range(self._size[0])] for j in range(self._size[1])]
         for x in range(self._size[0]):
