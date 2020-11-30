@@ -2,7 +2,9 @@ import pygame
 
 from Board import Board
 
+#WHITE
 BACKGROUND = (255, 255, 255)
+#SILVER/GREY
 DEFAULT_TILE = (200, 200, 200)
 
 RED = (255, 0, 0)
@@ -15,6 +17,11 @@ PURPLE = (128, 0, 128)
 ORANGE = (128, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
+LTBLUE = (145, 220, 250)
+TAN = (210, 180, 140)
+LTPINK = (255, 210, 220)
+
+
 
 class Display:
     currentStart = None

@@ -51,9 +51,52 @@ class CaptainAmerica(Champion):
 
 class IronMan(Champion):
     def update_stat_page(self):
-        pass
+        if self._click_value is 1:
+            self._speed = 10
+            self._attack = 10
+            self._defense = 18
+            self._damage = 4
+        elif 1 < self._click_value < 4:
+            self._speed = 10
+            self._attack = 10
+            self._defense = 17
+            self._damage = 3
+        elif 3 < self._click_value < 6:
+            self._speed = 9
+            self._attack = 9
+            self._defense = 17
+            self._damage = 2
+        else:
+            self._speed = 8
+            self._attack = 9
+            self._defense = 16
+            self._damage = 2
 
 
 class Thor(Champion):
     def update_stat_page(self):
-        pass
+        if self._click_value is 1:
+            self._speed = 10
+            self._attack = 11
+            self._defense = 18
+            self._damage = 4
+        elif 1 < self._click_value < 4:
+            self._speed = 10
+            self._attack = 11
+            self._defense = 17
+            self._damage = 4
+        elif 3 < self._click_value < 7:
+            self._speed = 10
+            self._attack = 10
+            self._defense = 17
+            self._damage = 3
+        elif 6 < self._click_value < 9:
+            self._speed = 9
+            self._attack = 9
+            self._defense = 17
+            self._damage = 3
+        else:
+            self._speed = 9
+            self._attack = 9
+            self._defense = 16
+            self._damage = 3
