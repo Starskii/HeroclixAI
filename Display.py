@@ -43,14 +43,16 @@ class Display:
             for adjacent in self.BOARD.adjacency[current]:
                 current_tile = self.get_tile(current[0]*50, current[1]*50)
                 adjacent_tile = self.get_tile(adjacent[0]*50, adjacent[1]*50)
+                d1 = False
+                d2 = False
                 if adjacent_tile.position[0] > current_tile.position[0]:
                     if adjacent_tile.position[1] == current_tile.position[1]:
-                        # Adjacent in to the right
-                        pygame.draw.rect(self.WINDOW, WHITE, (49 + (current[0] * 50), 2 + (current[1] * 50), 3, 48))
+                        # Adjacent is to the right
+                        pygame.draw.rect(self.WINDOW, WHITE, (50 + (current[0] * 50), (current[1] * 50), 3, 50))
                 if adjacent_tile.position[1] > current_tile.position[1]:
                     if adjacent_tile.position[0] == current_tile.position[0]:
                         # Adjacent is below
-                        pygame.draw.rect(self.WINDOW, WHITE,  (2 + (current[0] * 50), 49 + (current[1] * 50), 48, 3))
+                        pygame.draw.rect(self.WINDOW, WHITE,  (2 + (current[0] * 50), 50 + (current[1] * 50), 50, 3))
 
     def draw_tiles(self):
         for row in range(16):
@@ -83,14 +85,34 @@ class Display:
         self.set_start(None)
         self.set_end(None)
 
+    def run_checks(self):
+        if self.currentStart is not None and self.currentEnd is not None:
+            self.BOARD.get_a_star_path(self.currentStart, self.currentEnd)
+            self.display_path()
+
+    def display_path(self):
+        for x in range(16):
+            for y in range(16):
+                node = self.BOARD.grid[x][y]
+                if node is not self.currentStart and node is not self.currentEnd:
+                    node.setColor(DEFAULT_TILE)
+
+        self.currentEnd.parent.setColor(TURQUOISE)
+        node = self.currentEnd.parent
+        while node.parent is not node:
+            node.parent.setColor(TURQUOISE)
+            node = node.parent
+        node.setColor(GREEN)
+
     def run(self):
         run = True
         while run:
             self.draw_background()
-            self.draw_tiles()
             self.draw_walls()
+            self.draw_tiles()
             pygame.display.update()
             for event in pygame.event.get():
+                # Controls loop
                 if event.type == pygame.QUIT:
                     # closed out
                     run = False
@@ -103,3 +125,4 @@ class Display:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                     # right mouse button
                     self.right_mouse_button_event()
+            self.run_checks()

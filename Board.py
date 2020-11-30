@@ -1,7 +1,30 @@
+import math
+
+
 class Tile:
     _position = (0, 0)
     _value = 0
     _color = (200, 200, 200)
+    cost_from_start = 0
+    parent = type(object)
+    f_cost = 0
+
+    def calculate_f_cost(self, sender, end):
+        # Calculate the G cost
+        self.parent = sender
+        if sender.position[0] == self.position[0] or sender.position[1] == self.position[1]:
+            self.cost_from_start = sender.cost_from_start + 1
+        else:
+            self.cost_from_start = sender.cost_from_start + (math.sqrt(2))
+        # Calculate the H cost
+        xDif = abs(self.position[0] - end.position[0])
+        yDif = abs(self.position[1] - end.position[1])
+        xDif = xDif * xDif
+        yDif = yDif * yDif
+        cost_from_end = math.sqrt(xDif + yDif)
+
+        # Set F cost to be G cost + H cost
+        self.f_cost = self.cost_from_start + cost_from_end
 
     def __init__(self, position, value):
         self._position = position
@@ -215,6 +238,30 @@ class Board:
                     else:
                         self.adjacency[tile.position].append(self._grid[x][y].position)
 
+    def get_a_star_path(self, start, end):
+        open = []
+        closed = []
+        open.append(start)
+        start.cost_from_start = -1
+        start.calculate_f_cost(start, end)
+        path_found = False
+        while not path_found:
+            current = get_lowest_cost_tile(open)
+            open.remove(current)
+            closed.append(current)
+            if (current is end):
+                # Path has been found
+                path_found = True
+            for node_position in self.adjacency[current.position[0], current.position[1]]:
+                node = self.grid[node_position[0]][node_position[1]]
+                if node not in closed:
+                    if node in open:
+                        if current.cost_from_start < node.parent.cost_from_start:
+                            node.calculate_f_cost(current, end)
+                    else:
+                        node.calculate_f_cost(current, end)
+                        open.append(node)
+
     @property
     def grid(self):
         return self._grid
@@ -222,3 +269,16 @@ class Board:
     @property
     def adjacency(self):
         return self._adjacency
+
+
+def get_lowest_cost_tile(open_list):
+    min_cost = None
+    lowest_node = None
+    for node in open_list:
+        if min_cost is None:
+            min_cost = node.f_cost
+            lowest_node = node
+        elif node.f_cost < min_cost:
+            min_cost = node.f_cost
+            lowest_node = node
+    return lowest_node
