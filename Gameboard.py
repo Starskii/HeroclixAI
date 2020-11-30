@@ -29,6 +29,7 @@ GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
 
+
 class Block:
     def __init__(self, row, col, width, total_rows):
         self.row = row

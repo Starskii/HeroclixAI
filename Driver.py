@@ -1,2 +1,4 @@
 from Board import Board
-board = Board()
+from Display import Display
+
+display = Display()

@@ -1,10 +1,18 @@
 class Tile:
     _position = (0, 0)
     _value = 0
+    _color = (200, 200, 200)
 
     def __init__(self, position, value):
         self._position = position
         self._value = value
+
+    def setColor(self, value):
+        self._color = value
+
+    @property
+    def color(self):
+        return self._color
 
     @property
     def position(self):
