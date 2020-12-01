@@ -3,6 +3,7 @@ from enum import Enum
 
 DEFAULT_TILE = (0, 0, 0)
 
+
 class TileType(Enum):
     REGULAR = 1
     WATER = 2
