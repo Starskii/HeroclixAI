@@ -73,6 +73,12 @@ class Display:
                         # Adjacent is below
                         pygame.draw.rect(self.WINDOW, WHITE,  (2 + (current[0] * 50), 50 + (current[1] * 50), 50, 3))
 
+    def get_tile_pixel_location(self, tile_position):
+        location = [0, 0]
+        location[0] = (2 + (tile_position[0] * 50))
+        location[1] = (2 + (tile_position[1] * 50))
+        return location
+
     def draw_tiles(self):
         for row in range(16):
             for col in range(16):
@@ -133,6 +139,12 @@ class Display:
         self.path.append(node)
         node.parent.setColor(PURPLE)
 
+    def display_teams(self):
+        for champions in self.BOARD.red_team:
+            self.WINDOW.blit(champions.image, self.get_tile_pixel_location(champions.position))
+        for champions in self.BOARD.blue_team:
+            self.WINDOW.blit(champions.image, self.get_tile_pixel_location(champions.position))
+
     def run(self):
         run = True
 
@@ -142,6 +154,7 @@ class Display:
         while run:
             self.run_checks()
             self.draw_tiles()
+            self.display_teams()
             pygame.display.update()
             for event in pygame.event.get():
                 # Controls loop

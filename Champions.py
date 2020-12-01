@@ -36,6 +36,10 @@ class Champion:
     def position(self):
         return self._position
 
+    @property
+    def image(self):
+        return self._img
+
     def set_position(self, position):
         self._position = position
 
