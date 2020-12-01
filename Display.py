@@ -4,7 +4,7 @@ from Board import Board
 
 #WHITE
 BACKGROUND = (255, 255, 255)
-#SILVER/GREY
+#SILVER/GREY for regular-type tiles
 DEFAULT_TILE = (200, 200, 200)
 
 RED = (255, 0, 0)
@@ -20,6 +20,7 @@ TURQUOISE = (64, 224, 208)
 LTBLUE = (145, 220, 250)
 TAN = (210, 180, 140)
 LTPINK = (255, 210, 220)
+DEBRIS = (122, 168, 130)
 
 
 
@@ -104,10 +105,10 @@ class Display:
                 if node is not self.currentStart and node is not self.currentEnd:
                     node.setColor(DEFAULT_TILE)
 
-        self.currentEnd.parent.setColor(TURQUOISE)
+        self.currentEnd.parent.setColor(DEBRIS)
         node = self.currentEnd.parent
         while node.parent is not node:
-            node.parent.setColor(TURQUOISE)
+            node.parent.setColor(DEBRIS)
             node = node.parent
         node.setColor(GREEN)
 
