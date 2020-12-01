@@ -32,8 +32,8 @@ GG_DEBRIS = (122, 168, 130)
 
 
 class Display:
-    currentStart = None
-    currentEnd = None
+    current_start = None
+    current_end = None
     SIZE = 800
     WINDOW = pygame.display.set_mode((SIZE, SIZE))
     BOARD = Board()
@@ -53,6 +53,12 @@ class Display:
         x = int(x / 50)
         y = int(y / 50)
         return self.BOARD.grid[x][y]
+
+    def get_position(self, position):
+        x = int(position[0]/50)
+        y = int(position[1] / 50)
+        ret = (x, y)
+        return ret
 
     def draw_background(self):
         pygame.draw.rect(self.WINDOW, BLACK, (0, 0, self.SIZE, self.SIZE))
@@ -99,41 +105,42 @@ class Display:
     def set_start(self, tile):
         if tile is not None:
             if tile.tile_type != TileType.DIRT:
-                self.currentStart = tile
+                self.current_start = tile
                 tile.setColor(GREEN)
-                if self.currentEnd is None and self.currentStart:
-                    self.currentEnd = tile
+                if self.current_end is None and self.current_start:
+                    self.current_end = tile
         else:
-            self.currentStart = None
+            self.current_start = None
 
     def set_end(self, tile):
         if tile is not None:
             if tile.tile_type != TileType.DIRT:
-                self.currentEnd = tile
-                if self.currentStart is None:
-                    self.currentStart = tile
+                self.current_end = tile
+                if self.current_start is None:
+                    self.current_start = tile
         else:
-            self.currentEnd = None
+            self.current_end = None
 
     def left_mouse_button_event(self):
         t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
         self.set_start(t)
 
     def right_mouse_button_event(self):
-        self.middle_mouse_button_event()
-
-    def middle_mouse_button_event(self):
         self.set_start(None)
         self.set_end(None)
         self.path = []
 
+    def middle_mouse_button_event(self):
+        position = self.get_position((pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
+        self.BOARD.red_team[0].set_position(position)
+
     def run_checks(self):
-        if self.currentStart is not None and self.currentEnd is not None:
-            self.BOARD.get_a_star_path(self.currentStart, self.currentEnd)
+        if self.current_start is not None and self.current_end is not None:
+            self.BOARD.get_a_star_path(self.current_start, self.current_end)
             self.set_color_for_path()
 
     def set_color_for_path(self):
-        node = self.currentEnd
+        node = self.current_end
         node.setColor(PURPLE)
         self.path = []
         while node.parent is not node:
