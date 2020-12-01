@@ -1,11 +1,14 @@
 import pygame
-
 from Board import Board
+from Board import TileType
+#from Board import DefaultColor
+
 
 #WHITE
 BACKGROUND = (255, 255, 255)
 #SILVER/GREY for regular-type tiles
 DEFAULT_TILE = (200, 200, 200)
+#DEFAULT_TILE = (145, 220, 250)
 
 RED = (255, 0, 0)
 GREEN = (0, 128, 0)
@@ -17,10 +20,14 @@ PURPLE = (128, 0, 128)
 ORANGE = (128, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
+#Water tiles
 LTBLUE = (145, 220, 250)
+#Dirt tiles
 TAN = (210, 180, 140)
+#Start_box tiles
 LTPINK = (255, 210, 220)
-DEBRIS = (122, 168, 130)
+#Grey-Green debris tiles
+GG_DEBRIS = (122, 168, 130)
 
 
 
@@ -30,6 +37,9 @@ class Display:
     SIZE = 800
     WINDOW = pygame.display.set_mode((SIZE, SIZE))
     BOARD = Board()
+    #prevColor = DEFAULT_TILE
+    #tempColor = DEFAULT_TILE
+    tileType = 0
 
     def __init__(self):
         pygame.init()
@@ -62,21 +72,41 @@ class Display:
                         # Adjacent is below
                         pygame.draw.rect(self.WINDOW, WHITE,  (2 + (current[0] * 50), 50 + (current[1] * 50), 50, 3))
 
-    def draw_tiles(self):
+    def draw_tiles(self, *tiles):
         for row in range(16):
             for col in range(16):
                 pygame.draw.rect(self.WINDOW, self.BOARD.grid[col][row].color, (2 + (col * 50), 2 + (row * 50), 48, 48))
 
     def set_start(self, tile):
         if self.currentStart is not None:
-            self.currentStart.setColor(DEFAULT_TILE)
+            if self.currentStart.tile_type == 'REGULAR':
+                self.currentStart.setColor(DEFAULT_TILE)
+            elif self.currentStart.tile_type == 'WATER':
+                self.currentStart.setColor(LTBLUE)
+            elif self.currentStart.tile_type == 'DIRT':
+                self.currentStart.setColor(TAN)
+            elif self.currentStart.tile_type == 'START_BOX':
+                self.currentStart.setColor(LTPINK)
+            elif self.currentStart.tile_type == 'DEBRIS':
+                self.currentStart.setColor(GG_DEBRIS)
+            #self.currentStart.setColor(DEFAULT_TILE)
         if tile is not None:
             self.currentStart = tile
             tile.setColor(GREEN)
 
     def set_end(self, tile):
         if self.currentEnd is not None:
-            self.currentEnd.setColor(DEFAULT_TILE)
+            if self.currentEnd.tile_type == 'REGULAR':
+                self.currentEnd.setColor(DEFAULT_TILE)
+            elif self.currentEnd.tile_type == 'WATER':
+                self.currentEnd.setColor(LTBLUE)
+            elif self.currentEnd.tile_type == 'DIRT':
+                self.currentEnd.setColor(TAN)
+            elif self.currentEnd.tile_type == 'START_BOX':
+                self.currentEnd.setColor(LTPINK)
+            elif self.currentEnd.tile_type == 'DEBRIS':
+                self.currentEnd.setColor(GG_DEBRIS)
+            #self.currentEnd.setColor(DEFAULT_TILE)
         if tile is not None:
             self.currentEnd = tile
             tile.setColor(RED)
@@ -103,12 +133,21 @@ class Display:
             for y in range(16):
                 node = self.BOARD.grid[x][y]
                 if node is not self.currentStart and node is not self.currentEnd:
-                    node.setColor(DEFAULT_TILE)
-
-        self.currentEnd.parent.setColor(DEBRIS)
+                    if self.BOARD.grid[x][y].tile_type == 'REGULAR':
+                        node.setColor(DEFAULT_TILE)
+                    elif self.BOARD.grid[x][y].tile_type == 'WATER':
+                        node.setColor(LTBLUE)
+                    elif self.BOARD.grid[x][y].tile_type == 'DIRT':
+                        node.setColor(TAN)
+                    elif self.BOARD.grid[x][y].tile_type == 'START_BOX':
+                        node.setColor(LTPINK)
+                    elif self.BOARD.grid[x][y].tile_type == 'DEBRIS':
+                        node.setColor(GG_DEBRIS)
+                    #node.setColor(DEFAULT_TILE)
+        self.currentEnd.parent.setColor(TURQUOISE)
         node = self.currentEnd.parent
         while node.parent is not node:
-            node.parent.setColor(DEBRIS)
+            node.parent.setColor(TURQUOISE)
             node = node.parent
         node.setColor(GREEN)
 

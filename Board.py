@@ -1,23 +1,37 @@
 import math
 from enum import Enum
 
+#class DefaultColor(Enum):
+# Plain tiles (SILVER/GREY)
+DEFAULT_TILE = (200, 200, 200)
+# Water tiles
+LTBLUE = (145, 220, 250)
+# Dirt tiles
+TAN = (210, 180, 140)
+# Start_box tiles
+LTPINK = (255, 210, 220)
+# debris tiles (GREY-GREEN)
+GG_DEBRIS = (122, 168, 130)
+
 
 class TileType(Enum):
-    REGULAR = 0
-    WATER = 1
-    DIRT = 2
-    START_BOX = 3
-    DEBRIS = 4
+    REGULAR = 1
+    WATER = 2
+    DIRT = 3
+    START_BOX = 4
+    DEBRIS = 5
 
 
 class Tile:
     _position = (0, 0)
-    #_value = 0
-    _tile_type = TileType.REGULAR
-    _color = (200, 200, 200)
+    # _value = 0
+    _tile_type = TileType
+    _color = DEFAULT_TILE
     cost_from_start = 0
     parent = type(object)
     f_cost = 0
+    #_defaultColor = DefaultColor
+    #_currColor = TAN
 
     def calculate_f_cost(self, sender, end):
         # Calculate the G cost
@@ -39,12 +53,26 @@ class Tile:
     def __init__(self, position, value):
         self._position = position
         self._tile_type = value
+        if value == 'REGULAR':
+            self._color = DEFAULT_TILE
+        elif value == 'WATER':
+            self._color = LTBLUE
+        elif value == 'DIRT':
+            self._color = TAN
+        elif value == 'START_BOX':
+            self._color = LTPINK
+        elif value == 'DEBRIS':
+            self._color = GG_DEBRIS
 
     def setColor(self, value):
         self._color = value
 
     def setTileType(self, value):
         self._tile_type = value
+
+    @property
+    def tile_type(self):
+        return self._tile_type
 
     @property
     def color(self):
@@ -68,40 +96,32 @@ class Board:
         self._grid = [[0 for i in range(self._size[0])] for j in range(self._size[1])]
         for x in range(self._size[0]):
             for y in range(self._size[1]):
-                if (x == 7 or x == 8) and (y == 7 or y == 8):
-                    self._grid[x][y] = Tile((x,y), TileType.DIRT)
-                elif((x == 1 or x == 2 or x == 3 or x == 14 or x == 15 or x == 16) \
-                      and (y == 1 or y == 2 or y == 3 or y == 14 or y == 15 or y == 16 )):
-                    self._grid[x][y] = Tile((x,y), TileType.START_BOX)
-                elif(( x == 3 and (y == 9 or y == 10 or y == 11))
-                     or (x == 4 and (y == 0 or (6 < y < 10)))
+                if ((x == 3 and (y == 9 or y == 10 or y == 11))
+                     or (x == 4 and (y == 0 or 6 < y < 10))
                      or (x == 5 and (y == 0 or y == 8))
-                     or (x == 6 and ((0 <= y < 3) or (5 < y < 9)))
-                     or (x == 7 and ((1 < y < 7) or y == 9))
-                     or (x == 8 and ((1 < y < 5) or y == 6 or (8 < y < 11)))
-                     or (x == 9 and ((0 <= y < 3) or (6 < y < 10) or (10 < y < 14)))
+                     or (x == 6 and (0 <= y < 3 or 5 < y < 9))
+                     or (x == 7 and (1 < y < 7 or y == 9))
+                     or (x == 8 and (1 < y < 5 or y == 6 or 8 < y < 11))
+                     or (x == 9 and (0 <= y < 3 or 6 < y < 10 or 10 < y < 14))
                      or ((x == 10 or x == 11) and (y == 0 or y == 13))
                      or (x == 11 and y == 14)):
-                    self._grid[x][y] = Tile((x,y), TileType.WATER)
+                    self._grid[x][y] = Tile((x, y), 'WATER')
+                elif(x == 7 or x == 8) and (y == 7 or y == 8):
+                    self._grid[x][y] = Tile((x, y), 'DIRT')
+                elif (0 <= x < 3 or 12 < x < 16) and (0 <= y < 3 or 12 < y < 16):
+                    self._grid[x][y] = Tile((x, y), 'START_BOX')
                 else:
-                    self._grid[x][y] = Tile((x,y), TileType.REGULAR)
+                    self._grid[x][y] = Tile((x, y), 'REGULAR')
         for x in range(self._size[0]):
             for y in range(self._size[1]):
                 self.add_adjacency(self._grid[x][y])
                 self.add_walls()
-        #self.add_water()
-        #self.add_dirt()
-        #self.add_start_box()
-
-
-    #def add_water(self):
-        #self._grid[0][0]._tile_type = setTileType(TileType.water)
 
 
     def add_walls_helper(self, *tiles):
         current = tiles[0]
         for x in range(len(tiles)):
-            if x is 0:
+            if x == 0:
                 pass
             else:
                 try:
@@ -261,7 +281,7 @@ class Board:
         self.add_walls_helper(grid[8][15], grid[7][15], grid[7][14])
         self.add_walls_helper(grid[10][15], grid[11][15], grid[11][14])
         self.add_walls_helper(grid[11][15], grid[10][14], grid[10][15])
-        #additional walls around earth squares in middle of board
+        # additional walls around earth squares in middle of board
         self.add_walls_helper(grid[7][7], grid[6][6], grid[6][7], grid[6][8], grid[7][6], grid[8][6])
         self.add_walls_helper(grid[7][8], grid[6][7], grid[6][8], grid[6][9], grid[7][9], grid[8][9])
         self.add_walls_helper(grid[8][7], grid[7][6], grid[8][6], grid[9][6], grid[9][7], grid[9][8])
@@ -272,9 +292,9 @@ class Board:
             for y in range(self._size[1]):
                 xdif = abs(x - tile.position[0])
                 ydif = abs(y - tile.position[1])
-                if xdif is 1 and ydif is 1 \
-                        or xdif is 1 and ydif is 0 \
-                        or xdif is 0 and ydif is 1:
+                if xdif == 1 and ydif == 1 \
+                        or xdif == 1 and ydif == 0 \
+                        or xdif == 0 and ydif == 1:
                     if tile.position not in self.adjacency:
                         self.adjacency[tile.position] = [self._grid[x][y].position]
                     else:
