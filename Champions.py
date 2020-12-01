@@ -1,17 +1,21 @@
 from abc import abstractmethod
+import pygame
 
 
 class Champion:
-    _positionX, _positionY = 0
+    _position = (0, 0)
     _click_value = 0
     _speed = 0
     _attack = 0
     _defense = 0
     _damage = 0
+    _img = None
 
-    def __init__(self):
+    def __init__(self, position):
+        self._position = position
         self._click_value = 1
         self.update_stat_page()
+        self.set_champion_image()
 
     def get_stat_page(self):
         return [self._click_value,  # Position 0
@@ -21,8 +25,19 @@ class Champion:
                 self._damage]      # Position 4
 
     @abstractmethod
+    def set_champion_image(self):
+        pass
+
+    @abstractmethod
     def update_stat_page(self):
         pass
+
+    @property
+    def position(self):
+        return self._position
+
+    def set_position(self, position):
+        self._position = position
 
 
 class CaptainAmerica(Champion):
@@ -48,6 +63,9 @@ class CaptainAmerica(Champion):
             self._defense = 17
             self._damage = 2
 
+    def set_champion_image(self):
+        self._img = pygame.image.load('images/captain_america.png')
+
 
 class IronMan(Champion):
     def update_stat_page(self):
@@ -71,6 +89,9 @@ class IronMan(Champion):
             self._attack = 9
             self._defense = 16
             self._damage = 2
+
+    def set_champion_image(self):
+        self._img = pygame.image.load('images/iron_man.png')
 
 
 class Thor(Champion):
@@ -100,3 +121,7 @@ class Thor(Champion):
             self._attack = 9
             self._defense = 16
             self._damage = 3
+
+    def set_champion_image(self):
+        self._img = pygame.image.load('images/thor.png')
+

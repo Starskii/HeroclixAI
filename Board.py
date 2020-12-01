@@ -1,6 +1,8 @@
 import math
 from enum import Enum
 
+from Champions import *
+
 DEFAULT_TILE = (0, 0, 0)
 
 
@@ -64,8 +66,22 @@ class Board:
     _size = (0, 0)
     _adjacency = {}
     _walled = {}
+    _red_team = []
+    _blue_team = []
+
+    @property
+    def red_team(self):
+        return self._red_team
+
+    @property
+    def blue_team(self):
+        return self._blue_team
 
     def __init__(self):
+        self.setup_board()
+        self.setup_teams()
+
+    def setup_board(self):
         cols = 16
         rows = 16
         self._size = (cols, rows)
@@ -78,6 +94,18 @@ class Board:
             for y in range(self._size[1]):
                 self.add_adjacency(self._grid[x][y])
                 self.add_walls()
+
+    def setup_teams(self):
+        self._red_team.append(CaptainAmerica((0, 0)))
+        self._red_team.append(Thor((1, 0)))
+        self._red_team.append(IronMan((2, 0)))
+
+        self._blue_team.append(CaptainAmerica((15, 15)))
+        self._blue_team.append(Thor((14, 15)))
+        self._blue_team.append(IronMan((13, 15)))
+
+
+
 
     def set_default_tile_type(self, tile):
         x = tile.position[0]
