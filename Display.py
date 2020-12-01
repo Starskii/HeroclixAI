@@ -62,8 +62,6 @@ class Display:
             for adjacent in self.BOARD.adjacency[current]:
                 current_tile = self.get_tile(current[0]*50, current[1]*50)
                 adjacent_tile = self.get_tile(adjacent[0]*50, adjacent[1]*50)
-                d1 = False
-                d2 = False
                 if adjacent_tile.position[0] > current_tile.position[0]:
                     if adjacent_tile.position[1] == current_tile.position[1]:
                         # Adjacent is to the right
@@ -99,29 +97,35 @@ class Display:
                     pygame.draw.rect(self.WINDOW, self.BOARD.grid[col][row].color, (2 + (col * 50), 2 + (row * 50), 48, 48))
 
     def set_start(self, tile):
-        if tile is not None and tile.tile_type != TileType.DIRT:
-            self.currentStart = tile
-            tile.setColor(GREEN)
-            if self.currentEnd is None:
-                self.currentEnd = tile
+        if tile is not None:
+            if tile.tile_type != TileType.DIRT:
+                self.currentStart = tile
+                tile.setColor(GREEN)
+                if self.currentEnd is None and self.currentStart:
+                    self.currentEnd = tile
+        else:
+            self.currentStart = None
 
     def set_end(self, tile):
-        if tile is not None and tile.tile_type != TileType.DIRT:
-            self.currentEnd = tile
-            if self.currentStart is None:
-                self.currentStart = tile
+        if tile is not None:
+            if tile.tile_type != TileType.DIRT:
+                self.currentEnd = tile
+                if self.currentStart is None:
+                    self.currentStart = tile
+        else:
+            self.currentEnd = None
 
     def left_mouse_button_event(self):
         t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
         self.set_start(t)
 
     def right_mouse_button_event(self):
-        t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-        self.set_end(t)
+        self.middle_mouse_button_event()
 
     def middle_mouse_button_event(self):
         self.set_start(None)
         self.set_end(None)
+        self.path = []
 
     def run_checks(self):
         if self.currentStart is not None and self.currentEnd is not None:
