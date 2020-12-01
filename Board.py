@@ -13,14 +13,11 @@ class TileType(Enum):
 
 class Tile:
     _position = (0, 0)
-    # _value = 0
     _tile_type = TileType
     _color = DEFAULT_TILE
     cost_from_start = 0
     parent = type(object)
     f_cost = 0
-    #_defaultColor = DefaultColor
-    #_currColor = TAN
 
     def calculate_f_cost(self, sender, end):
         # Calculate the G cost
