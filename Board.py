@@ -261,7 +261,7 @@ class Board:
         self.add_walls_helper(grid[8][15], grid[7][15], grid[7][14])
         self.add_walls_helper(grid[10][15], grid[11][15], grid[11][14])
         self.add_walls_helper(grid[11][15], grid[10][14], grid[10][15])
-        # additional walls around earth squares in middle of board
+        #additional walls around earth squares in middle of board
         self.add_walls_helper(grid[7][7], grid[6][6], grid[6][7], grid[6][8], grid[7][6], grid[8][6])
         self.add_walls_helper(grid[7][8], grid[6][7], grid[6][8], grid[6][9], grid[7][9], grid[8][9])
         self.add_walls_helper(grid[8][7], grid[7][6], grid[8][6], grid[9][6], grid[9][7], grid[9][8])
