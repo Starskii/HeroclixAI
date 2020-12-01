@@ -90,7 +90,9 @@ class Display:
             elif self.currentStart.tile_type == 'DEBRIS':
                 self.currentStart.setColor(GG_DEBRIS)
             #self.currentStart.setColor(DEFAULT_TILE)
-        if tile is not None:
+        if tile is not None and not (tile.position == (7,7)
+                or tile.position == (7,8) or tile.position == (8,7)
+                or tile.position == (8,8)):
             self.currentStart = tile
             tile.setColor(GREEN)
 
@@ -107,7 +109,9 @@ class Display:
             elif self.currentEnd.tile_type == 'DEBRIS':
                 self.currentEnd.setColor(GG_DEBRIS)
             #self.currentEnd.setColor(DEFAULT_TILE)
-        if tile is not None:
+        if tile is not None and not (tile.position == (7,7)
+                  or tile.position == (7,8) or tile.position == (8,7)
+                  or tile.position == (8,8)):
             self.currentEnd = tile
             tile.setColor(RED)
 
