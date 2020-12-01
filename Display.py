@@ -40,6 +40,7 @@ class Display:
     #prevColor = DEFAULT_TILE
     #tempColor = DEFAULT_TILE
     tileType = 0
+    path = []
 
     def __init__(self):
         pygame.init()
@@ -72,48 +73,37 @@ class Display:
                         # Adjacent is below
                         pygame.draw.rect(self.WINDOW, WHITE,  (2 + (current[0] * 50), 50 + (current[1] * 50), 50, 3))
 
-    def draw_tiles(self, *tiles):
+    def draw_tiles(self):
         for row in range(16):
             for col in range(16):
-                pygame.draw.rect(self.WINDOW, self.BOARD.grid[col][row].color, (2 + (col * 50), 2 + (row * 50), 48, 48))
+                color = (0, 0, 0)
+                if self.BOARD.grid[col][row] not in self.path:
+                    if self.BOARD.grid[col][row].tile_type == TileType.START_BOX:
+                        color = LTPINK
+                    elif self.BOARD.grid[col][row].tile_type == TileType.REGULAR:
+                        color = DEFAULT_TILE
+                    elif self.BOARD.grid[col][row].tile_type == TileType.WATER:
+                        color = TURQUOISE
+                    elif self.BOARD.grid[col][row].tile_type == TileType.DIRT:
+                        color = TAN
+                    elif self.BOARD.grid[col][row].tile_type == TileType.DEBRIS:
+                        color = RED
+                    pygame.draw.rect(self.WINDOW, color, (2 + (col * 50), 2 + (row * 50), 48, 48))
+                else:
+                    pygame.draw.rect(self.WINDOW, self.BOARD.grid[col][row].color, (2 + (col * 50), 2 + (row * 50), 48, 48))
 
     def set_start(self, tile):
-        if self.currentStart is not None:
-            if self.currentStart.tile_type == 'REGULAR':
-                self.currentStart.setColor(DEFAULT_TILE)
-            elif self.currentStart.tile_type == 'WATER':
-                self.currentStart.setColor(LTBLUE)
-            elif self.currentStart.tile_type == 'DIRT':
-                self.currentStart.setColor(TAN)
-            elif self.currentStart.tile_type == 'START_BOX':
-                self.currentStart.setColor(LTPINK)
-            elif self.currentStart.tile_type == 'DEBRIS':
-                self.currentStart.setColor(GG_DEBRIS)
-            #self.currentStart.setColor(DEFAULT_TILE)
-        if tile is not None and not (tile.position == (7,7)
-                or tile.position == (7,8) or tile.position == (8,7)
-                or tile.position == (8,8)):
+        if tile is not None and tile.tile_type != TileType.DIRT:
             self.currentStart = tile
             tile.setColor(GREEN)
+            if self.currentEnd is None:
+                self.currentEnd = tile
 
     def set_end(self, tile):
-        if self.currentEnd is not None:
-            if self.currentEnd.tile_type == 'REGULAR':
-                self.currentEnd.setColor(DEFAULT_TILE)
-            elif self.currentEnd.tile_type == 'WATER':
-                self.currentEnd.setColor(LTBLUE)
-            elif self.currentEnd.tile_type == 'DIRT':
-                self.currentEnd.setColor(TAN)
-            elif self.currentEnd.tile_type == 'START_BOX':
-                self.currentEnd.setColor(LTPINK)
-            elif self.currentEnd.tile_type == 'DEBRIS':
-                self.currentEnd.setColor(GG_DEBRIS)
-            #self.currentEnd.setColor(DEFAULT_TILE)
-        if tile is not None and not (tile.position == (7,7)
-                  or tile.position == (7,8) or tile.position == (8,7)
-                  or tile.position == (8,8)):
+        if tile is not None and tile.tile_type != TileType.DIRT:
             self.currentEnd = tile
-            tile.setColor(RED)
+            if self.currentStart is None:
+                self.currentStart = tile
 
     def left_mouse_button_event(self):
         t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
@@ -130,36 +120,27 @@ class Display:
     def run_checks(self):
         if self.currentStart is not None and self.currentEnd is not None:
             self.BOARD.get_a_star_path(self.currentStart, self.currentEnd)
-            self.display_path()
+            self.set_color_for_path()
 
-    def display_path(self):
-        for x in range(16):
-            for y in range(16):
-                node = self.BOARD.grid[x][y]
-                if node is not self.currentStart and node is not self.currentEnd:
-                    if self.BOARD.grid[x][y].tile_type == 'REGULAR':
-                        node.setColor(DEFAULT_TILE)
-                    elif self.BOARD.grid[x][y].tile_type == 'WATER':
-                        node.setColor(LTBLUE)
-                    elif self.BOARD.grid[x][y].tile_type == 'DIRT':
-                        node.setColor(TAN)
-                    elif self.BOARD.grid[x][y].tile_type == 'START_BOX':
-                        node.setColor(LTPINK)
-                    elif self.BOARD.grid[x][y].tile_type == 'DEBRIS':
-                        node.setColor(GG_DEBRIS)
-                    #node.setColor(DEFAULT_TILE)
-        self.currentEnd.parent.setColor(TURQUOISE)
-        node = self.currentEnd.parent
+    def set_color_for_path(self):
+        node = self.currentEnd
+        node.setColor(PURPLE)
+        self.path = []
         while node.parent is not node:
-            node.parent.setColor(TURQUOISE)
+            self.path.append(node)
+            node.parent.setColor(PURPLE)
             node = node.parent
-        node.setColor(GREEN)
+        self.path.append(node)
+        node.parent.setColor(PURPLE)
 
     def run(self):
         run = True
+
+        self.draw_background()
+        self.draw_walls()
+
         while run:
-            self.draw_background()
-            self.draw_walls()
+            self.run_checks()
             self.draw_tiles()
             pygame.display.update()
             for event in pygame.event.get():
@@ -176,4 +157,3 @@ class Display:
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                     # right mouse button
                     self.right_mouse_button_event()
-            self.run_checks()

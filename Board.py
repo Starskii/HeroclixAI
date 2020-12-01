@@ -1,18 +1,7 @@
 import math
 from enum import Enum
 
-#class DefaultColor(Enum):
-# Plain tiles (SILVER/GREY)
-DEFAULT_TILE = (200, 200, 200)
-# Water tiles
-LTBLUE = (145, 220, 250)
-# Dirt tiles
-TAN = (210, 180, 140)
-# Start_box tiles
-LTPINK = (255, 210, 220)
-# debris tiles (GREY-GREEN)
-GG_DEBRIS = (122, 168, 130)
-
+DEFAULT_TILE = (0, 0, 0)
 
 class TileType(Enum):
     REGULAR = 1
@@ -50,24 +39,13 @@ class Tile:
         # Set F cost to be G cost + H cost
         self.f_cost = self.cost_from_start + cost_from_end
 
-    def __init__(self, position, value):
+    def __init__(self, position):
         self._position = position
-        self._tile_type = value
-        if value == 'REGULAR':
-            self._color = DEFAULT_TILE
-        elif value == 'WATER':
-            self._color = LTBLUE
-        elif value == 'DIRT':
-            self._color = TAN
-        elif value == 'START_BOX':
-            self._color = LTPINK
-        elif value == 'DEBRIS':
-            self._color = GG_DEBRIS
 
     def setColor(self, value):
         self._color = value
 
-    def setTileType(self, value):
+    def set_tile_type(self, value):
         self._tile_type = value
 
     @property
@@ -96,27 +74,33 @@ class Board:
         self._grid = [[0 for i in range(self._size[0])] for j in range(self._size[1])]
         for x in range(self._size[0]):
             for y in range(self._size[1]):
-                if ((x == 3 and (y == 9 or y == 10 or y == 11))
-                     or (x == 4 and (y == 0 or 6 < y < 10))
-                     or (x == 5 and (y == 0 or y == 8))
-                     or (x == 6 and (0 <= y < 3 or 5 < y < 9))
-                     or (x == 7 and (1 < y < 7 or y == 9))
-                     or (x == 8 and (1 < y < 5 or y == 6 or 8 < y < 11))
-                     or (x == 9 and (0 <= y < 3 or 6 < y < 10 or 10 < y < 14))
-                     or ((x == 10 or x == 11) and (y == 0 or y == 13))
-                     or (x == 11 and y == 14)):
-                    self._grid[x][y] = Tile((x, y), 'WATER')
-                elif(x == 7 or x == 8) and (y == 7 or y == 8):
-                    self._grid[x][y] = Tile((x, y), 'DIRT')
-                elif (0 <= x < 3 or 12 < x < 16) and (0 <= y < 3 or 12 < y < 16):
-                    self._grid[x][y] = Tile((x, y), 'START_BOX')
-                else:
-                    self._grid[x][y] = Tile((x, y), 'REGULAR')
+                self.grid[x][y] = Tile((x, y))
+                self.set_default_tile_type(self._grid[x][y])
         for x in range(self._size[0]):
             for y in range(self._size[1]):
                 self.add_adjacency(self._grid[x][y])
                 self.add_walls()
 
+    def set_default_tile_type(self, tile):
+        x = tile.position[0]
+        y = tile.position[1]
+
+        if ((x == 3 and (y == 9 or y == 10 or y == 11))
+                or (x == 4 and (y == 0 or 6 < y < 10))
+                or (x == 5 and (y == 0 or y == 8))
+                or (x == 6 and (0 <= y < 3 or 5 < y < 9))
+                or (x == 7 and (1 < y < 7 or y == 9))
+                or (x == 8 and (1 < y < 5 or y == 6 or 8 < y < 11))
+                or (x == 9 and (0 <= y < 3 or 6 < y < 10 or 10 < y < 14))
+                or ((x == 10 or x == 11) and (y == 0 or y == 13))
+                or (x == 11 and y == 14)):
+            self._grid[x][y].set_tile_type(TileType.WATER)
+        elif (x == 7 or x == 8) and (y == 7 or y == 8):
+            self._grid[x][y].set_tile_type(TileType.DIRT)
+        elif (0 <= x < 3 or 12 < x < 16) and (0 <= y < 3 or 12 < y < 16):
+            self._grid[x][y].set_tile_type(TileType.START_BOX)
+        else:
+            self._grid[x][y].set_tile_type(TileType.REGULAR)
 
     def add_walls_helper(self, *tiles):
         current = tiles[0]
