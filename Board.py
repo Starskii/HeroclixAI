@@ -21,6 +21,7 @@ class Tile:
     cost_from_start = 0
     parent = type(object)
     f_cost = 0
+    use_default_color = True
 
     def calculate_f_cost(self, sender, end):
         # Calculate the G cost
@@ -104,8 +105,8 @@ class Board:
         self._blue_team.append(Thor((14, 15)))
         self._blue_team.append(IronMan((13, 15)))
 
-
-
+    def get_tile(self, position):
+        return self._grid[position[0]][position[1]]
 
     def set_default_tile_type(self, tile):
         x = tile.position[0]

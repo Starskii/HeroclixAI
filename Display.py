@@ -1,5 +1,5 @@
 import pygame
-from Board import Board
+from Board import Board, Champion
 from Board import TileType
 #from Board import DefaultColor
 
@@ -41,6 +41,7 @@ class Display:
     #tempColor = DEFAULT_TILE
     tileType = 0
     path = []
+    selected_champion = None
 
     def __init__(self):
         pygame.init()
@@ -87,7 +88,7 @@ class Display:
         for row in range(16):
             for col in range(16):
                 color = (0, 0, 0)
-                if self.BOARD.grid[col][row] not in self.path:
+                if self.BOARD.grid[col][row].use_default_color:
                     if self.BOARD.grid[col][row].tile_type == TileType.START_BOX:
                         color = LTPINK
                     elif self.BOARD.grid[col][row].tile_type == TileType.REGULAR:
@@ -121,14 +122,28 @@ class Display:
         else:
             self.current_end = None
 
+    def reset_colors(self):
+        for x in range(16):
+            for y in range(16):
+                self.BOARD.grid[x][y].use_default_color = True
+
     def left_mouse_button_event(self):
+        self.reset_colors()
         t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-        self.set_start(t)
+        for champion in self.BOARD.red_team:
+            if champion.position == t.position:
+                self.selected_champion = champion
+                self.highlight_possible_moves()
 
     def right_mouse_button_event(self):
-        self.set_start(None)
-        self.set_end(None)
-        self.path = []
+        self.reset_colors()
+        t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+        if self.selected_champion is not None:
+            self.BOARD.get_a_star_path(self.BOARD.get_tile(self.selected_champion.position), t)
+            path = self.get_path_as_list(t)
+            if len(path) < self.selected_champion.speed:
+                self.selected_champion.set_position(t.position)
+                self.selected_champion = None
 
     def middle_mouse_button_event(self):
         position = self.get_position((pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
@@ -138,6 +153,29 @@ class Display:
         if self.current_start is not None and self.current_end is not None:
             self.BOARD.get_a_star_path(self.current_start, self.current_end)
             self.set_color_for_path()
+
+    def highlight_possible_moves(self):
+        position = self.selected_champion.position
+        start_tile = self.BOARD.grid[position[0]][position[1]]
+        for x in range(16):
+            for y in range(16):
+                if self.BOARD.grid[x][y].tile_type != TileType.DIRT:
+                    self.BOARD.get_a_star_path(start_tile, self.BOARD.grid[x][y])
+                    path = self.get_path_as_list(self.BOARD.grid[x][y])
+                    if len(path) < self.selected_champion.speed:
+                        for tile in path:
+                            tile.setColor(GG_DEBRIS)
+                            tile.use_default_color = False
+
+    def get_path_as_list(self, end):
+        node = end
+        node.setColor(PURPLE)
+        path = []
+        while node.parent is not node:
+            path.append(node)
+            node = node.parent
+        path.append(node)
+        return path
 
     def set_color_for_path(self):
         node = self.current_end

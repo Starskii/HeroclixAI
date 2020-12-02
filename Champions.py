@@ -33,6 +33,10 @@ class Champion:
         pass
 
     @property
+    def speed(self):
+        return self._speed
+
+    @property
     def position(self):
         return self._position
 
