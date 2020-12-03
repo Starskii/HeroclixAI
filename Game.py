@@ -101,12 +101,47 @@ class Game:
 
     def move_champion(self, champion, tile):
         if self.check_for_breakaway(champion):
-            print(str(type(champion)) + "'s move failed due to failing breakaway")
+            pass
+            # print(str(type(champion)) + "'s move failed due to failing breakaway")
         else:
             available_moves = self.get_available_movement(champion)
             if tile in available_moves:
                 self._board.get_tile(champion.position).set_champion(None)
                 tile.set_champion(champion)
+
+    @staticmethod
+    def minimum_distance(champion, enemy):
+        x_dif = abs(champion.position[0] - enemy.position[0])
+        y_dif = abs(champion.position[1] - enemy.position[1])
+        leftover = abs(x_dif - y_dif)
+        if x_dif < y_dif:
+            return x_dif + leftover
+        else:
+            return y_dif + leftover
+
+    def attack(self, champion, enemy):
+        print(str(type(champion)) + " attacks " + str(type(enemy)))
+        if self._is_AI:
+            roll = randint(2, 12)
+            if roll == 12:
+                enemy.set_click_value(champion.damage + 1)
+            elif roll == 2:
+                champion.set_click_value(1)
+            else:
+                if champion.attack + roll > enemy.defense:
+                    enemy.set_click_value(champion.damage)
+
+    def get_targets_in_range(self, champion):
+        if self._current_turn == Team.RED_TEAM:
+            enemy_team = self._board.blue_team
+        else:
+            enemy_team = self._board.red_team
+        target_in_range_list = []
+        for enemies in enemy_team:
+            if len(self._board.paths[(champion.position, enemies.position)]) == self.minimum_distance(champion, enemies) + 1:
+                if len(self._board.paths[(champion.position, enemies.position)]) < champion.range:
+                    target_in_range_list.append(enemies)
+        return target_in_range_list
 
     def end_turn(self):
         if self._current_turn == Team.RED_TEAM:

@@ -8,6 +8,7 @@ class Champion:
     _attack = 0
     _defense = 0
     _damage = 0
+    _range = 0
     _img = None
 
     def __init__(self, position):
@@ -21,7 +22,24 @@ class Champion:
                 self._speed,  # Position 1
                 self._attack,  # Position 2
                 self._defense,  # Position 3
-                self._damage]      # Position 4
+                self._damage,   # Position 4
+                self._range]    #position 5
+
+    def set_click_value(self, value):
+        self._click_value + value
+        self.update_stat_page()
+
+    @property
+    def attack(self):
+        return self._attack
+
+    @property
+    def defense(self):
+        return self._defense
+
+    @property
+    def damage(self):
+        return self._damage
 
     @abstractmethod
     def set_champion_image(self):
@@ -43,12 +61,17 @@ class Champion:
     def image(self):
         return self._img
 
+    @property
+    def range(self):
+        return self._range
+
     def set_position(self, position):
         self._position = position
 
 
 class CaptainAmerica(Champion):
     def update_stat_page(self):
+        self._range = 5
         if self._click_value is 1:
             self._speed = 8
             self._attack = 11
@@ -76,6 +99,7 @@ class CaptainAmerica(Champion):
 
 class IronMan(Champion):
     def update_stat_page(self):
+        self._range = 7
         if self._click_value is 1:
             self._speed = 10
             self._attack = 10
@@ -103,6 +127,7 @@ class IronMan(Champion):
 
 class Thor(Champion):
     def update_stat_page(self):
+        self._range = 6
         if self._click_value is 1:
             self._speed = 10
             self._attack = 11

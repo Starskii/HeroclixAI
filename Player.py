@@ -76,7 +76,6 @@ class Player:
         self._board = board
 
     def make_move(self):
-        current_team = None
         if self._game.current_turn == Game.Team.RED_TEAM:
             current_team = self._board.red_team
         else:
@@ -86,7 +85,9 @@ class Player:
             moves = self._game.get_available_movement(champions)
             picked_move = randint(0, len(moves)-1)
             self._game.move_champion(champions, moves[picked_move])
+            attack_choices = self._game.get_targets_in_range(champions)
+            if len(attack_choices) > 0:
+                picked_move = randint(0, len(attack_choices) - 1)
+                self._game.attack(champions, attack_choices[picked_move])
 
         self._game.end_turn()
-
-
