@@ -123,10 +123,12 @@ class Board:
         i = 0
         for champions in self._red_team:
             champions.set_position((i, 0))
+            champions.reset_champion()
             i += 1
         i = 13
         for champions in self._blue_team:
             champions.set_position((i, 15))
+            champions.reset_champion()
             i += 1
         for champions in self._red_team + self._blue_team:
             self.get_tile(champions.position).set_champion(champions)

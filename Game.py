@@ -16,10 +16,15 @@ class Team(Enum):
 class Game:
     _board = Board()
     _current_turn = Team.RED_TEAM
-    _display_on = True
+    _display_on = False
     _display = None
     _player = None
     _is_AI = True
+    counter = 0
+
+    @property
+    def display_on(self):
+        return self._display_on
 
     @property
     def current_turn(self):
@@ -52,13 +57,13 @@ class Game:
 
     def __init__(self):
         self._player = Player(self, self._board)
-        if self._display_on:
-            self._display = Display(self._board, self)
+        self._display = Display(self._board, self)
         self.run_game()
 
     def reset_game(self):
         self._board.reset_board()
         self._current_turn = Team.RED_TEAM
+        Game.counter = 0
 
     def get_available_movement(self, champion):
         available_movement = []
@@ -120,7 +125,6 @@ class Game:
             return y_dif + leftover
 
     def attack(self, champion, enemy):
-        print(str(type(champion)) + " attacks " + str(type(enemy)))
         if self._is_AI:
             roll = randint(2, 12)
             if roll == 12:
@@ -149,16 +153,44 @@ class Game:
         else:
             self._current_turn = Team.RED_TEAM
 
+    def check_win(self):
+        win = True
+        if self._current_turn == Team.RED_TEAM:
+            enemy_team = self._board.blue_team
+        else:
+            enemy_team = self._board.red_team
+        for champion in enemy_team:
+            if not champion.KO:
+                win = False
+        return win
+
+    @staticmethod
+    def game_broken():
+        Game.counter += 1
+        if Game.counter > 250:
+            return True
+        else:
+            return False
+
     def run_game(self):
-        run = True
+        red_wins = 0
+        blue_wins = 0
         i = 0
         # start = time.perf_counter()
-        # while i < 1000:
-        # if i != 0:
-        while run:
-            if self._display_on:
-                self._display.run()
-            self._player.make_move()
+        while i < 1000:
+            run = True
+            while run:
+                if self._display_on:
+                    self._display.run()
+                self._player.make_move()
+                run = not self.check_win()
+            if self._current_turn == Team.RED_TEAM:
+                red_wins += 1
+            else:
+                blue_wins += 1
+            print("Red: " + str(red_wins) + ", Blue: " + str(blue_wins))
+            self.reset_game()
+
 
         # i += 1
         # end = time.perf_counter()

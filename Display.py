@@ -137,7 +137,7 @@ class Display:
             self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
 
     def run(self):
-        run = True
+        run = self._game.display_on
 
         self.draw_background()
         self.draw_walls()

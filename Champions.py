@@ -9,6 +9,7 @@ class Champion:
     _defense = 0
     _damage = 0
     _range = 0
+    _KO = False
     _img = None
 
     def __init__(self, position):
@@ -16,6 +17,10 @@ class Champion:
         self._click_value = 1
         self.update_stat_page()
         self.set_champion_image()
+
+    def reset_champion(self):
+        self._click_value = 1
+        self.update_stat_page()
 
     def get_stat_page(self):
         return [self._click_value,  # Position 0
@@ -26,8 +31,12 @@ class Champion:
                 self._range]    #position 5
 
     def set_click_value(self, value):
-        self._click_value + value
+        self._click_value += value
         self.update_stat_page()
+
+    @property
+    def KO(self):
+        return self._KO
 
     @property
     def attack(self):
@@ -73,6 +82,7 @@ class CaptainAmerica(Champion):
     def update_stat_page(self):
         self._range = 5
         if self._click_value is 1:
+            self._KO = False
             self._speed = 8
             self._attack = 11
             self._defense = 17
@@ -92,6 +102,8 @@ class CaptainAmerica(Champion):
             self._attack = 9
             self._defense = 17
             self._damage = 2
+        if self._click_value > 7:
+            self._KO = True
 
     def set_champion_image(self):
         self._img = 'images/captain_america.png'
@@ -101,6 +113,7 @@ class IronMan(Champion):
     def update_stat_page(self):
         self._range = 7
         if self._click_value is 1:
+            self._KO = False
             self._speed = 10
             self._attack = 10
             self._defense = 18
@@ -120,6 +133,8 @@ class IronMan(Champion):
             self._attack = 9
             self._defense = 16
             self._damage = 2
+        if self._click_value > 7:
+            self._KO = True
 
     def set_champion_image(self):
         self._img = 'images/iron_man.png'
@@ -129,6 +144,7 @@ class Thor(Champion):
     def update_stat_page(self):
         self._range = 6
         if self._click_value is 1:
+            self._KO = False
             self._speed = 10
             self._attack = 11
             self._defense = 18
@@ -153,6 +169,8 @@ class Thor(Champion):
             self._attack = 9
             self._defense = 16
             self._damage = 3
+        if self._click_value > 7:
+            self._KO = True
 
     def set_champion_image(self):
         self._img = 'images/thor.png'
