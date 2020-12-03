@@ -1,5 +1,6 @@
 import time
 from enum import Enum
+from random import randint
 
 from Board import Board, TileType
 from Champions import *
@@ -14,12 +15,15 @@ class Team(Enum):
 
 class Game:
     _board = Board()
-    _red_team = []
-    _blue_team = []
     _current_turn = Team.RED_TEAM
     _display_on = True
     _display = None
     _player = None
+    _is_AI = True
+
+    @property
+    def current_turn(self):
+        return self._current_turn
 
     @property
     def red_team(self):
@@ -75,23 +79,53 @@ class Game:
                                     available_movement.append(tile)
         return available_movement
 
+    def check_for_breakaway(self, champion):
+        breakaway = False
+        enemy_team = None
+        if self._current_turn == Team.RED_TEAM:
+            enemy_team = self._board.blue_team
+        else:
+            enemy_team = self._board.red_team
+        for enemies in enemy_team:
+            if len(self._board.paths[(champion.position, enemies.position)]) == 2:
+                if self.get_breakaway_roll() == 1:
+                    breakaway = True
+        return breakaway
+
+    def get_breakaway_roll(self):
+        if self._is_AI:
+            return randint(0, 1)
+        else:
+            # Get roll from user
+            pass
+
     def move_champion(self, champion, tile):
-        available_moves = self.get_available_movement(champion)
-        if tile in available_moves:
-            self._board.get_tile(champion.position).set_champion(None)
-            tile.set_champion(champion)
+        if self.check_for_breakaway(champion):
+            print(str(type(champion)) + "'s move failed due to failing breakaway")
+        else:
+            available_moves = self.get_available_movement(champion)
+            if tile in available_moves:
+                self._board.get_tile(champion.position).set_champion(None)
+                tile.set_champion(champion)
+
+    def end_turn(self):
+        if self._current_turn == Team.RED_TEAM:
+            self._current_turn = Team.BLUE_TEAM
+        else:
+            self._current_turn = Team.RED_TEAM
 
     def run_game(self):
         run = True
         i = 0
         # start = time.perf_counter()
-        while i < 1000:
-            # if i != 0:
+        # while i < 1000:
+        # if i != 0:
+        while run:
             if self._display_on:
                 self._display.run()
             self._player.make_move()
-            i += 1
 
+        # i += 1
         # end = time.perf_counter()
         # total_time = end-start
         # print("Time: " + str(total_time))

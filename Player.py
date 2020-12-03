@@ -64,7 +64,8 @@
 #         print(f"Epoch: {epoch + 1}, loss={avg_loss:.3f}, test set      accuracy={test_acc * 100:.3f}%")
 #
 #     print("\nTraining complete!")
-
+from random import random, randint
+import Game
 
 class Player:
     _game = None
@@ -75,8 +76,17 @@ class Player:
         self._board = board
 
     def make_move(self):
-        for champions in self._board.red_team + self._board.blue_team:
+        current_team = None
+        if self._game.current_turn == Game.Team.RED_TEAM:
+            current_team = self._board.red_team
+        else:
+            current_team = self._board.blue_team
+
+        for champions in current_team:
             moves = self._game.get_available_movement(champions)
-            self._game.move_champion(champions, moves[len(moves)-1])
+            picked_move = randint(0, len(moves)-1)
+            self._game.move_champion(champions, moves[picked_move])
+
+        self._game.end_turn()
 
 
