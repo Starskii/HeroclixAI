@@ -30,23 +30,26 @@ LTPINK = (255, 210, 220)
 GG_DEBRIS = (122, 168, 130)
 
 
-
 class Display:
     current_start = None
     current_end = None
     SIZE = 800
     WINDOW = pygame.display.set_mode((SIZE, SIZE))
-    BOARD = Board()
+    BOARD = None
     #prevColor = DEFAULT_TILE
     #tempColor = DEFAULT_TILE
     tileType = 0
     path = []
     selected_champion = None
-    game = None
+    _game = None
 
-    def __init__(self, board):
+    def __init__(self, board, game):
         pygame.init()
         pygame.display.set_caption("HeroClix AI")
+        self.reset_display(board, game)
+
+    def reset_display(self, board, game):
+        self._game = game
         self.BOARD = board
         self.draw_background()
         self.draw_tiles()
@@ -56,12 +59,6 @@ class Display:
         x = int(x / 50)
         y = int(y / 50)
         return self.BOARD.grid[x][y]
-
-    def get_position(self, position):
-        x = int(position[0]/50)
-        y = int(position[1] / 50)
-        ret = (x, y)
-        return ret
 
     def draw_background(self):
         pygame.draw.rect(self.WINDOW, BLACK, (0, 0, self.SIZE, self.SIZE))
@@ -105,25 +102,6 @@ class Display:
                 else:
                     pygame.draw.rect(self.WINDOW, self.BOARD.grid[col][row].color, (2 + (col * 50), 2 + (row * 50), 48, 48))
 
-    def set_start(self, tile):
-        if tile is not None:
-            if tile.tile_type != TileType.DIRT:
-                self.current_start = tile
-                tile.setColor(GREEN)
-                if self.current_end is None and self.current_start:
-                    self.current_end = tile
-        else:
-            self.current_start = None
-
-    def set_end(self, tile):
-        if tile is not None:
-            if tile.tile_type != TileType.DIRT:
-                self.current_end = tile
-                if self.current_start is None:
-                    self.current_start = tile
-        else:
-            self.current_end = None
-
     def reset_colors(self):
         for x in range(16):
             for y in range(16):
@@ -141,53 +119,16 @@ class Display:
         self.reset_colors()
         t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
         if self.selected_champion is not None:
-            self.BOARD.get_a_star_path(self.BOARD.get_tile(self.selected_champion.position), t)
-            path = self.get_path_as_list(t)
-            if len(path) < self.selected_champion.speed:
-                self.selected_champion.set_position(t.position)
-                self.selected_champion = None
+            self._game.move_champion(self.selected_champion, t)
 
     def middle_mouse_button_event(self):
-        position = self.get_position((pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
-        self.BOARD.red_team[0].set_position(position)
-
-    def run_checks(self):
-        if self.current_start is not None and self.current_end is not None:
-            self.BOARD.get_a_star_path(self.current_start, self.current_end)
-            self.set_color_for_path()
+        self._game.reset_game()
 
     def highlight_possible_moves(self):
-        position = self.selected_champion.position
-        start_tile = self.BOARD.grid[position[0]][position[1]]
-        for x in range(16):
-            for y in range(16):
-                if self.BOARD.grid[x][y].tile_type != TileType.DIRT:
-                    self.BOARD.get_a_star_path(start_tile, self.BOARD.grid[x][y])
-                    path = self.get_path_as_list(self.BOARD.grid[x][y])
-                    if len(path) < self.selected_champion.speed:
-                        for tile in path:
-                            tile.setColor(GG_DEBRIS)
-                            tile.use_default_color = False
+        for tiles in self._game.get_available_movement(self.selected_champion):
+            tiles.setColor(GG_DEBRIS)
+            tiles.use_default_color = False
 
-    def get_path_as_list(self, end):
-        node = end
-        path = []
-        while node.parent is not node:
-            path.append(node)
-            node = node.parent
-        path.append(node)
-        return path
-
-    def set_color_for_path(self):
-        node = self.current_end
-        node.setColor(PURPLE)
-        self.path = []
-        while node.parent is not node:
-            self.path.append(node)
-            node.parent.setColor(PURPLE)
-            node = node.parent
-        self.path.append(node)
-        node.parent.setColor(PURPLE)
 
     def display_teams(self):
         for champions in self.BOARD.red_team:
@@ -202,7 +143,6 @@ class Display:
         self.draw_walls()
 
         while run:
-            self.run_checks()
             self.draw_tiles()
             self.display_teams()
             pygame.display.update()

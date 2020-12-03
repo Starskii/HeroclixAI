@@ -1,4 +1,3 @@
-from Board import Board
-from Display import Display
+from Game import Game
 
-display = Display()
+game = Game()

@@ -28,33 +28,33 @@ class Game:
 
     def __init__(self):
         if self._display_on:
-            self._display = Display(self._board)
+            self._display = Display(self._board, self)
         self.reset_game()
 
     def reset_game(self):
-        self._board = Board()
+        self._board.reset_board()
         self._current_turn = Team.RED_TEAM
 
     def get_available_movement(self, champion):
         available_movement = []
-        if champion is type(Champion):
-            position = champion.position
-            start_tile = self._board.grid[position[0]][position[1]]
-            for x in range(16):
-                for y in range(16):
-                    if self._board.grid[x][y].tile_type != TileType.DIRT:
-                        self._board.get_a_star_path(start_tile, self._board.grid[x][y])
-                        path = self._board.get_path_as_list(self._board.grid[x][y])
-                        if len(path) < champion.speed:
-                            for tile in path:
-                                if tile not in available_movement:
-                                    available_movement.append(tile)
+        position = champion.position
+        start_tile = self._board.grid[position[0]][position[1]]
+        for x in range(16):
+            for y in range(16):
+                if self._board.grid[x][y].tile_type != TileType.DIRT:
+                    self._board.get_a_star_path(start_tile, self._board.grid[x][y])
+                    path = self._board.get_path_as_list(self._board.grid[x][y])
+                    if len(path) < champion.speed:
+                        for tile in path:
+                            if tile not in available_movement and tile.champion is None:
+                                available_movement.append(tile)
         return available_movement
 
-    def move_champion(self, champion):
+    def move_champion(self, champion, tile):
+        available_moves = self.get_available_movement(champion)
+        if tile in available_moves:
+            self._board.get_tile(champion.position).set_champion(None)
+            tile.set_champion(champion)
 
-
-
-game = Game()
 
 

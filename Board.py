@@ -50,6 +50,11 @@ class Tile:
     def set_tile_type(self, value):
         self._tile_type = value
 
+    def set_champion(self, champion):
+        self._champion = champion
+        if champion is not None:
+            champion.set_position(self.position)
+
     @property
     def champion(self):
         return self._champion
@@ -87,6 +92,19 @@ class Board:
         self.setup_board()
         self.setup_teams()
 
+    def reset_board(self):
+        self.setup_board()
+        i = 0
+        for champions in self._red_team:
+            champions.set_position((i, 0))
+            i += 1
+        i = 13
+        for champions in self._blue_team:
+            champions.set_position((i, 15))
+            i += 1
+        for champions in self._red_team + self._blue_team:
+            self.get_tile(champions.position).set_champion(champions)
+
     def setup_board(self):
         cols = 16
         rows = 16
@@ -109,6 +127,9 @@ class Board:
         self._blue_team.append(CaptainAmerica((15, 15)))
         self._blue_team.append(Thor((14, 15)))
         self._blue_team.append(IronMan((13, 15)))
+
+        for champions in self._red_team + self._blue_team:
+            self.get_tile(champions.position).set_champion(champions)
 
     def get_tile(self, position):
         return self._grid[position[0]][position[1]]
@@ -327,7 +348,7 @@ class Board:
             current = get_lowest_cost_tile(open)
             open.remove(current)
             closed.append(current)
-            if (current is end):
+            if current is end:
                 # Path has been found
                 path_found = True
             for node_position in self.adjacency[current.position[0], current.position[1]]:
