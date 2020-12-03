@@ -1,4 +1,5 @@
 import math
+import pickle
 from enum import Enum
 
 from Champions import *
@@ -23,6 +24,26 @@ class Tile:
     f_cost = 0
     _champion = None
     use_default_color = True
+
+    @property
+    def champion(self):
+        return self._champion
+
+    @property
+    def tile_type(self):
+        return self._tile_type
+
+    @property
+    def color(self):
+        return self._color
+
+    @property
+    def position(self):
+        return self._position
+
+    @property
+    def cost(self):
+        return self.cost_from_start
 
     def calculate_f_cost(self, sender, end):
         # Calculate the G cost
@@ -55,23 +76,6 @@ class Tile:
         if champion is not None:
             champion.set_position(self.position)
 
-    @property
-    def champion(self):
-        return self._champion
-
-    @property
-    def tile_type(self):
-        return self._tile_type
-
-    @property
-    def color(self):
-        return self._color
-
-    @property
-    def position(self):
-        return self._position
-
-
 class Board:
     _grid = [[]]
     _size = (0, 0)
@@ -79,7 +83,11 @@ class Board:
     _walled = {}
     _red_team = []
     _blue_team = []
+    _paths = {}
 
+    @property
+    def paths(self):
+        return self._paths
     @property
     def red_team(self):
         return self._red_team
@@ -91,9 +99,27 @@ class Board:
     def __init__(self):
         self.setup_board()
         self.setup_teams()
+        self.generate_all_paths()
+
+    def generate_all_paths(self):
+        try:
+            f = open('obj/path_data.pkl', 'rb')  # 'rb' for reading bytes
+            self._paths = pickle.load(f)
+            f.close()
+        except:
+            for first_x in range(16):
+                for first_y in range(16):
+                    first_tile = self._grid[first_x][first_y]
+                    for second_x in range(16):
+                        for second_y in range(16):
+                            second_tile = self._grid[second_x][second_y]
+                            if first_tile.tile_type is not TileType.DIRT and second_tile.tile_type is not TileType.DIRT:
+                                self.get_a_star_path(first_tile, second_tile)
+                                self._paths[(first_tile.position, second_tile.position)] = self.get_path_as_list(second_tile)
+            filehandler = open('obj/path_data.pkl', 'wb')
+            pickle.dump(self.paths, filehandler)
 
     def reset_board(self):
-        self.setup_board()
         i = 0
         for champions in self._red_team:
             champions.set_position((i, 0))
@@ -365,9 +391,9 @@ class Board:
         node = end
         path = []
         while node.parent is not node:
-            path.append(node)
+            path.append(node.position)
             node = node.parent
-        path.append(node)
+        path.append(node.position)
         return path
 
     @property

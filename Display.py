@@ -53,7 +53,6 @@ class Display:
         self.BOARD = board
         self.draw_background()
         self.draw_tiles()
-        self.run()
 
     def get_tile(self, x, y):
         x = int(x / 50)
@@ -129,12 +128,13 @@ class Display:
             tiles.setColor(GG_DEBRIS)
             tiles.use_default_color = False
 
-
     def display_teams(self):
         for champions in self.BOARD.red_team:
-            self.WINDOW.blit(champions.image, self.get_tile_pixel_location(champions.position))
+            champImg = pygame.image.load(champions.image)
+            self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
         for champions in self.BOARD.blue_team:
-            self.WINDOW.blit(champions.image, self.get_tile_pixel_location(champions.position))
+            champImg = pygame.image.load(champions.image)
+            self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
 
     def run(self):
         run = True
@@ -153,7 +153,8 @@ class Display:
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     # left mouse button
-                    self.left_mouse_button_event()
+                    # self.left_mouse_button_event()
+                    run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
                     # middle mouse button
                     self.middle_mouse_button_event()

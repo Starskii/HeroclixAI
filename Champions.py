@@ -1,5 +1,4 @@
 from abc import abstractmethod
-import pygame
 
 
 class Champion:
@@ -72,7 +71,7 @@ class CaptainAmerica(Champion):
             self._damage = 2
 
     def set_champion_image(self):
-        self._img = pygame.image.load('images/captain_america.png')
+        self._img = 'images/captain_america.png'
 
 
 class IronMan(Champion):
@@ -99,7 +98,7 @@ class IronMan(Champion):
             self._damage = 2
 
     def set_champion_image(self):
-        self._img = pygame.image.load('images/iron_man.png')
+        self._img = 'images/iron_man.png'
 
 
 class Thor(Champion):
@@ -131,5 +130,5 @@ class Thor(Champion):
             self._damage = 3
 
     def set_champion_image(self):
-        self._img = pygame.image.load('images/thor.png')
+        self._img = 'images/thor.png'
 
