@@ -42,10 +42,12 @@ class Display:
     tileType = 0
     path = []
     selected_champion = None
+    game = None
 
-    def __init__(self):
+    def __init__(self, board):
         pygame.init()
         pygame.display.set_caption("HeroClix AI")
+        self.BOARD = board
         self.draw_background()
         self.draw_tiles()
         self.run()
@@ -169,7 +171,6 @@ class Display:
 
     def get_path_as_list(self, end):
         node = end
-        node.setColor(PURPLE)
         path = []
         while node.parent is not node:
             path.append(node)

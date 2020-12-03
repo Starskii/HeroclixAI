@@ -21,6 +21,7 @@ class Tile:
     cost_from_start = 0
     parent = type(object)
     f_cost = 0
+    _champion = None
     use_default_color = True
 
     def calculate_f_cost(self, sender, end):
@@ -31,11 +32,11 @@ class Tile:
         else:
             self.cost_from_start = sender.cost_from_start + (math.sqrt(2))
         # Calculate the H cost
-        xDif = abs(self.position[0] - end.position[0])
-        yDif = abs(self.position[1] - end.position[1])
-        xDif = xDif * xDif
-        yDif = yDif * yDif
-        cost_from_end = math.sqrt(xDif + yDif)
+        x_dif = abs(self.position[0] - end.position[0])
+        y_dif = abs(self.position[1] - end.position[1])
+        x_dif = x_dif * x_dif
+        y_dif = y_dif * y_dif
+        cost_from_end = math.sqrt(x_dif + y_dif)
 
         # Set F cost to be G cost + H cost
         self.f_cost = self.cost_from_start + cost_from_end
@@ -48,6 +49,10 @@ class Tile:
 
     def set_tile_type(self, value):
         self._tile_type = value
+
+    @property
+    def champion(self):
+        return self._champion
 
     @property
     def tile_type(self):
@@ -334,6 +339,15 @@ class Board:
                     else:
                         node.calculate_f_cost(current, end)
                         open.append(node)
+
+    def get_path_as_list(self, end):
+        node = end
+        path = []
+        while node.parent is not node:
+            path.append(node)
+            node = node.parent
+        path.append(node)
+        return path
 
     @property
     def grid(self):
