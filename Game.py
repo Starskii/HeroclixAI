@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 
 from Board import Board, TileType
@@ -83,13 +84,18 @@ class Game:
     def run_game(self):
         run = True
         i = 0
-        while run:
-            if i != 0:
-                self._player.make_move()
+        # start = time.perf_counter()
+        while i < 1000:
+            # if i != 0:
             if self._display_on:
                 self._display.run()
+            self._player.make_move()
             i += 1
 
+        # end = time.perf_counter()
+        # total_time = end-start
+        # print("Time: " + str(total_time))
+        # print("Turns per hour: " + str((1000/total_time)*3600))
 
 
 

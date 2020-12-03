@@ -73,7 +73,6 @@ class Player:
     def __init__(self, game, board):
         self._game = game
         self._board = board
-        self.make_move()
 
     def make_move(self):
         for champions in self._board.red_team + self._board.blue_team:
