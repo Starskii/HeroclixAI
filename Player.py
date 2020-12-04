@@ -65,7 +65,7 @@
 #
 #     print("\nTraining complete!")
 from random import random, randint
-import Game
+
 
 class Player:
     _game = None
@@ -76,7 +76,7 @@ class Player:
         self._board = board
 
     def make_move(self):
-        if self._game.current_turn == Game.Team.RED_TEAM:
+        if self._game.current_turn == self._game.Team.RED_TEAM:
             current_team = self._board.red_team
         else:
             current_team = self._board.blue_team
