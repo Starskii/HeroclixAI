@@ -36,8 +36,6 @@ class Display:
     SIZE = 800
     WINDOW = pygame.display.set_mode((SIZE, SIZE))
     BOARD = None
-    #prevColor = DEFAULT_TILE
-    #tempColor = DEFAULT_TILE
     tileType = 0
     path = []
     selected_champion = None
@@ -113,10 +111,12 @@ class Display:
             if champion.position == t.position:
                 self.selected_champion = champion
                 self.highlight_possible_moves()
+                self.mark_attackable_enemies()
         for champion in self.BOARD.blue_team:
             if champion.position == t.position:
                 self.selected_champion = champion
                 self.highlight_possible_moves()
+                self.mark_attackable_enemies()
 
     def right_mouse_button_event(self):
         self.reset_colors()
@@ -125,12 +125,22 @@ class Display:
             self._game.move_champion(self.selected_champion, t)
 
     def middle_mouse_button_event(self):
+        self.reset_colors()
         self._game.end_turn()
 
     def highlight_possible_moves(self):
         for tiles in self._game.get_available_movement(self.selected_champion):
             tiles.setColor(GG_DEBRIS)
             tiles.use_default_color = False
+
+    def show_path(self, start_position, end_position):
+        for tiles in self.BOARD.paths[(start_position, end_position)]:
+            t = self.BOARD.get_tile(tiles)
+            t.setColor(GG_DEBRIS)
+            t.use_default_color = False
+
+    def mark_attackable_enemies(self, enemies):
+        pass
 
     def display_teams(self):
         for champions in self.BOARD.red_team:
@@ -160,6 +170,7 @@ class Display:
                     self.left_mouse_button_event()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
                     # middle mouse button
+                    self.reset_colors()
                     self._game.end_turn()
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:

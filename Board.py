@@ -159,18 +159,24 @@ class Board:
         for champions in self._red_team:
             self.get_tile(champions.position).set_champion(champions)
             if type(champions) is CaptainAmerica:
+                champions.name = "Red Captain America"
                 champions.set_champion_image('images/redCap.png')
             elif type(champions) is IronMan:
+                champions.name = "Red Iron Man"
                 champions.set_champion_image('images/redIronman.png')
             elif type(champions) is Thor:
+                champions.name = "Red Thor"
                 champions.set_champion_image('images/redThor.png')
         for champions in self._blue_team:
             self.get_tile(champions.position).set_champion(champions)
             if type(champions) is CaptainAmerica:
+                champions.name = "Blue Captain America"
                 champions.set_champion_image('images/blueCap.png')
             elif type(champions) is IronMan:
+                champions.name = "Blue Iron Man"
                 champions.set_champion_image('images/blueIronman.png')
             elif type(champions) is Thor:
+                champions.name = "Blue Thor"
                 champions.set_champion_image('images/blueThor.png')
 
 

@@ -85,14 +85,12 @@ class Player:
         self._currentPlayer = self._game.get_current_player()
         if self._currentPlayer is currentPlayer.AI:
             for champions in current_team:
-                    if not champions.KO:
-                        moves = self._game.get_available_movement(champions)
-                    if(len(moves) > 0):
-                        picked_move = randint(0, len(moves)-1)
-                        self._game.move_champion(champions, moves[picked_move])
-                    else:
-                        if self._game.game_broken():
-                            self._game.reset_game()
+                if not champions.KO:
+                    moves = self._game.get_available_movement(champions)
+                if(len(moves) > 0):
+                    picked_move = randint(0, len(moves)-1)
+                    self._game.move_champion(champions, moves[picked_move])
+                else:
                     attack_choices = self._game.get_targets_in_range(champions)
                     if len(attack_choices) > 0:
                         picked_move = randint(0, len(attack_choices) - 1)

@@ -19,7 +19,7 @@ class Game:
     _display_on = True
     _display = None
     _player = None
-    _is_AI = False
+    _is_AI = True
     counter = 0
 
     @property
@@ -115,12 +115,14 @@ class Game:
             pass
 
     def move_champion(self, champion, tile):
+        print("\n")
         if self.check_for_breakaway(champion):
-            pass
-            # print(str(type(champion)) + "'s move failed due to failing breakaway")
+            print(champion.name + "'s move failed due to failing breakaway")
         else:
             available_moves = self.get_available_movement(champion)
             if tile in available_moves:
+                print(champion.name + " moves from " + str(champion.position) + " to " + str(tile.position))
+                self._display.show_path(champion.position, tile.position)
                 self._board.get_tile(champion.position).set_champion(None)
                 tile.set_champion(champion)
 
@@ -137,13 +139,22 @@ class Game:
     def attack(self, champion, enemy):
         if self._is_AI:
             roll = randint(2, 12)
-            if roll == 12:
-                enemy.set_click_value(champion.damage + 1)
-            elif roll == 2:
-                champion.set_click_value(1)
-            else:
-                if champion.attack + roll > enemy.defense:
-                    enemy.set_click_value(champion.damage)
+        else:
+            # get roll from user
+            pass
+        if roll == 12:
+            enemy.set_click_value(champion.damage + 1)
+            print(champion.name + " hits " + enemy.name + " for critical damage")
+            print(enemy.name + " is now at click level: " + str(enemy.click_value))
+        elif roll == 2:
+            champion.set_click_value(1)
+            print(champion.name + " hits himeself for 1 damage")
+            print(champion.name + " is now at click level: " + str(champion.click_value))
+        else:
+            if champion.attack + roll > enemy.defense:
+                enemy.set_click_value(champion.damage)
+                print(champion.name + " hits " + enemy.name)
+                print(enemy.name + " is now at click level: " + str(enemy.click_value))
 
     def get_targets_in_range(self, champion):
         if self._current_turn == Team.RED_TEAM:

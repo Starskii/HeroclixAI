@@ -2,6 +2,7 @@ from abc import abstractmethod
 
 
 class Champion:
+    name = ""
     _position = (0, 0)
     _click_value = 0
     _speed = 0
