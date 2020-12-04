@@ -156,8 +156,25 @@ class Board:
         self._blue_team.append(Thor((14, 15)))
         self._blue_team.append(IronMan((13, 15)))
 
-        for champions in self._red_team + self._blue_team:
+        for champions in self._red_team:
             self.get_tile(champions.position).set_champion(champions)
+            if type(champions) is CaptainAmerica:
+                champions.set_champion_image('images/redCap.png')
+            elif type(champions) is IronMan:
+                champions.set_champion_image('images/redIronman.png')
+            elif type(champions) is Thor:
+                champions.set_champion_image('images/redThor.png')
+        for champions in self._blue_team:
+            self.get_tile(champions.position).set_champion(champions)
+            if type(champions) is CaptainAmerica:
+                champions.set_champion_image('images/blueCap.png')
+            elif type(champions) is IronMan:
+                champions.set_champion_image('images/blueIronman.png')
+            elif type(champions) is Thor:
+                champions.set_champion_image('images/blueThor.png')
+
+
+
 
     def get_tile(self, position):
         return self._grid[position[0]][position[1]]

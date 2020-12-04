@@ -17,7 +17,9 @@ class Champion:
         self._position = position
         self._click_value = 1
         self.update_stat_page()
-        self.set_champion_image()
+
+    def set_champion_image(self, img):
+        self._img = img
 
     def reset_champion(self):
         self._click_value = 1
@@ -56,10 +58,6 @@ class Champion:
         return self._damage
 
     @abstractmethod
-    def set_champion_image(self):
-        pass
-
-    @abstractmethod
     def update_stat_page(self):
         pass
 
@@ -84,6 +82,7 @@ class Champion:
 
     def set_action_tokens(self, value):
         self._action_tokens = value
+
 
 class CaptainAmerica(Champion):
     def update_stat_page(self):
@@ -112,9 +111,6 @@ class CaptainAmerica(Champion):
         if self._click_value > 7:
             self._KO = True
 
-    def set_champion_image(self):
-        self._img = 'images/captain_america.png'
-
 
 class IronMan(Champion):
     def update_stat_page(self):
@@ -142,9 +138,6 @@ class IronMan(Champion):
             self._damage = 2
         if self._click_value > 7:
             self._KO = True
-
-    def set_champion_image(self):
-        self._img = 'images/iron_man.png'
 
 
 class Thor(Champion):
@@ -178,7 +171,4 @@ class Thor(Champion):
             self._damage = 3
         if self._click_value > 7:
             self._KO = True
-
-    def set_champion_image(self):
-        self._img = 'images/thor.png'
 

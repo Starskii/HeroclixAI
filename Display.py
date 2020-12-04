@@ -113,6 +113,10 @@ class Display:
             if champion.position == t.position:
                 self.selected_champion = champion
                 self.highlight_possible_moves()
+        for champion in self.BOARD.blue_team:
+            if champion.position == t.position:
+                self.selected_champion = champion
+                self.highlight_possible_moves()
 
     def right_mouse_button_event(self):
         self.reset_colors()

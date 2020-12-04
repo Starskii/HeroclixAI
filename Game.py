@@ -23,6 +23,10 @@ class Game:
     counter = 0
 
     @property
+    def is_AI_game(self):
+        return self._is_AI
+
+    @property
     def display_on(self):
         return self._display_on
 
@@ -52,7 +56,7 @@ class Game:
                 else:
                     cost += 1
         else:
-            cost = len(path)
+            cost = len(path)-2
         return cost
 
     def __init__(self):
@@ -187,7 +191,6 @@ class Game:
             return False
 
     def run_game(self):
-        # start = time.perf_counter()
         red_wins = 0
         blue_wins = 0
         run = True
@@ -202,11 +205,6 @@ class Game:
             blue_wins += 1
         print("Red: " + str(red_wins) + ", Blue: " + str(blue_wins))
         self.reset_game()
-        # i += 1
-        # end = time.perf_counter()
-        # total_time = end-start
-        # print("Time: " + str(total_time))
-        # print("Turns per hour: " + str((1000/total_time)*3600))
 
 
 
