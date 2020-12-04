@@ -154,11 +154,16 @@ class Thor(Champion):
             self._attack = 11
             self._defense = 18
             self._damage = 4
-        elif 1 < self._click_value < 4:
+        elif 2:
             self._speed = 11
             self._attack = 11
             self._defense = 17
             self._damage = 4
+        elif 3:
+            self._speed = 11
+            self._attack = 11
+            self._defense = 17
+            self._damage = 3
         elif 3 < self._click_value < 7:
             self._speed = 11
             self._attack = 10
