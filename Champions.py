@@ -113,7 +113,7 @@ class CaptainAmerica(Champion):
             self._attack = 9
             self._defense = 17
             self._damage = 2
-        if self._click_value > 7:
+        if self._click_value > 6:
             self._KO = True
 
 
@@ -174,6 +174,6 @@ class Thor(Champion):
             self._attack = 9
             self._defense = 16
             self._damage = 3
-        if self._click_value > 7:
+        if self._click_value > 9:
             self._KO = True
 
