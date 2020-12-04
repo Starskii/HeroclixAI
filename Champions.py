@@ -9,6 +9,7 @@ class Champion:
     _defense = 0
     _damage = 0
     _range = 0
+    _action_tokens = 0
     _KO = False
     _img = None
 
@@ -33,6 +34,10 @@ class Champion:
     def set_click_value(self, value):
         self._click_value += value
         self.update_stat_page()
+
+    @property
+    def action_tokens(self):
+        return self._action_tokens
 
     @property
     def KO(self):
@@ -77,6 +82,8 @@ class Champion:
     def set_position(self, position):
         self._position = position
 
+    def set_action_tokens(self, value):
+        self._action_tokens = value
 
 class CaptainAmerica(Champion):
     def update_stat_page(self):

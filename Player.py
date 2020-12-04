@@ -64,8 +64,12 @@
 #         print(f"Epoch: {epoch + 1}, loss={avg_loss:.3f}, test set      accuracy={test_acc * 100:.3f}%")
 #
 #     print("\nTraining complete!")
+from enum import Enum
 from random import random, randint
 
+class currentPlayer(Enum):
+    PLAYER = 0
+    AI = 1
 
 class Player:
     _game = None
@@ -74,25 +78,26 @@ class Player:
     def __init__(self, game, board):
         self._game = game
         self._board = board
+        self._currentPlayer = currentPlayer.PLAYER
 
     def make_move(self):
-        if self._game.current_team_is_red():
-            current_team = None
+        current_team = self._game.get_current_team()
+        self._currentPlayer = self._game.get_current_player()
+        if self._currentPlayer is currentPlayer.AI:
+                for champions in current_team:
+                    if not champions.KO:
+                        moves = self._game.get_available_movement(champions)
+                        if(len(moves) > 0):
+                            picked_move = randint(0, len(moves)-1)
+                            self._game.move_champion(champions, moves[picked_move])
+                        else:
+                            if self._game.game_broken():
+                                self._game.reset_game()
+                        attack_choices = self._game.get_targets_in_range(champions)
+                        if len(attack_choices) > 0:
+                            picked_move = randint(0, len(attack_choices) - 1)
+                            self._game.attack(champions, attack_choices[picked_move])
+                self._game.end_turn()
         else:
-            current_team = self._board.blue_team
-
-        if current_team is not None:
-            for champions in current_team:
-                if not champions.KO:
-                    moves = self._game.get_available_movement(champions)
-                    if(len(moves) > 0):
-                        picked_move = randint(0, len(moves)-1)
-                        self._game.move_champion(champions, moves[picked_move])
-                    else:
-                        if self._game.game_broken():
-                            self._game.reset_game()
-                    attack_choices = self._game.get_targets_in_range(champions)
-                    if len(attack_choices) > 0:
-                        picked_move = randint(0, len(attack_choices) - 1)
-                        self._game.attack(champions, attack_choices[picked_move])
-            self._game.end_turn()
+            pass
+            # move manually

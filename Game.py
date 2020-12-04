@@ -5,7 +5,7 @@ from random import randint
 from Board import Board, TileType
 from Champions import *
 from Display import Display
-from Player import Player
+from Player import Player, currentPlayer
 
 
 class Team(Enum):
@@ -15,11 +15,11 @@ class Team(Enum):
 
 class Game:
     _board = Board()
-    _current_turn = Team.RED_TEAM.value
+    _current_turn = Team.RED_TEAM
     _display_on = True
     _display = None
     _player = None
-    _is_AI = True
+    _is_AI = False
     counter = 0
 
     @property
@@ -60,11 +60,11 @@ class Game:
         self._display = Display(self._board, self)
         self.run_game()
 
-    def current_team_is_red(self):
-        if self._current_turn == Team.RED_TEAM:
-            return True
+    def get_current_team(self):
+        if self._current_turn is Team.RED_TEAM:
+            return self._board.red_team
         else:
-            return False
+            return self._board.blue_team
 
     def reset_game(self):
         self._board.reset_board()
@@ -153,6 +153,14 @@ class Game:
                     target_in_range_list.append(enemies)
         return target_in_range_list
 
+    def get_current_player(self):
+        if self._is_AI:
+            return currentPlayer.AI
+        if self._current_turn == Team.RED_TEAM:
+            return currentPlayer.PLAYER
+        else:
+            return currentPlayer.AI
+
     def end_turn(self):
         if self._current_turn == Team.RED_TEAM:
             self._current_turn = Team.BLUE_TEAM
@@ -179,25 +187,21 @@ class Game:
             return False
 
     def run_game(self):
+        # start = time.perf_counter()
         red_wins = 0
         blue_wins = 0
-        i = 0
-        # start = time.perf_counter()
-        while i < 1000:
-            run = True
-            while run:
-                if self._display_on:
-                    self._display.run()
-                self._player.make_move()
-                run = not self.check_win()
-            if self._current_turn == Team.RED_TEAM:
-                red_wins += 1
-            else:
-                blue_wins += 1
-            print("Red: " + str(red_wins) + ", Blue: " + str(blue_wins))
-            self.reset_game()
-
-
+        run = True
+        while run:
+            if self._display_on:
+                self._display.run()
+            self._player.make_move()
+            run = not self.check_win()
+        if self._current_turn == Team.RED_TEAM:
+            red_wins += 1
+        else:
+            blue_wins += 1
+        print("Red: " + str(red_wins) + ", Blue: " + str(blue_wins))
+        self.reset_game()
         # i += 1
         # end = time.perf_counter()
         # total_time = end-start
