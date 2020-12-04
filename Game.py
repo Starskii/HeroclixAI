@@ -19,7 +19,7 @@ class Game:
     _display_on = True
     _display = None
     _player = None
-    _is_AI = True
+    _is_AI = False
     counter = 0
 
     @property
@@ -112,7 +112,7 @@ class Game:
             return randint(0, 1)
         else:
             # Get roll from user
-            pass
+            return int(self._display.get_dice_roll())
 
     def move_champion(self, champion, tile):
         print("\n")
@@ -141,17 +141,17 @@ class Game:
             roll = randint(2, 12)
         else:
             # get roll from user
-            pass
-        if roll == 12:
+            roll = self._display.get_dice_roll()
+        if int(roll) == 12:
             enemy.set_click_value(champion.damage + 1)
             print(champion.name + " hits " + enemy.name + " for critical damage")
             print(enemy.name + " is now at click level: " + str(enemy.click_value))
-        elif roll == 2:
+        elif int(roll) == 2:
             champion.set_click_value(1)
             print(champion.name + " hits himeself for 1 damage")
             print(champion.name + " is now at click level: " + str(champion.click_value))
         else:
-            if champion.attack + roll > enemy.defense:
+            if champion.attack + int(roll) > enemy.defense:
                 enemy.set_click_value(champion.damage)
                 print(champion.name + " hits " + enemy.name)
                 print(enemy.name + " is now at click level: " + str(enemy.click_value))

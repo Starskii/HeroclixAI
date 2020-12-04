@@ -1,6 +1,7 @@
 import pygame
 from Board import Board, Champion
 from Board import TileType
+import PySimpleGUI as sg
 #from Board import DefaultColor
 
 
@@ -57,6 +58,13 @@ class Display:
         y = int(y / 50)
         return self.BOARD.grid[x][y]
 
+    @staticmethod
+    def get_dice_roll():
+        event, values = sg.Window('Attack Value',
+                                  [[sg.T('Enter Dice Roll'), sg.In(key='-ROLL-')],
+                                   [sg.B('OK'), sg.B('Cancel')]]).read(close=True)
+        return values['-ROLL-']
+
     def draw_background(self):
         pygame.draw.rect(self.WINDOW, BLACK, (0, 0, self.SIZE, self.SIZE))
 
@@ -111,18 +119,21 @@ class Display:
             if champion.position == t.position:
                 self.selected_champion = champion
                 self.highlight_possible_moves()
-                self.mark_attackable_enemies()
+                self.mark_attackable_enemies(self._game.get_targets_in_range(champion))
         for champion in self.BOARD.blue_team:
             if champion.position == t.position:
                 self.selected_champion = champion
                 self.highlight_possible_moves()
-                self.mark_attackable_enemies()
+                self.mark_attackable_enemies(self._game.get_targets_in_range(champion))
 
     def right_mouse_button_event(self):
         self.reset_colors()
         t = self.get_tile(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
         if self.selected_champion is not None:
-            self._game.move_champion(self.selected_champion, t)
+            if t.champion is not None:
+                self._game.attack(self.selected_champion, t.champion)
+            else:
+                self._game.move_champion(self.selected_champion, t)
 
     def middle_mouse_button_event(self):
         self.reset_colors()

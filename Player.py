@@ -90,13 +90,12 @@ class Player:
                 if(len(moves) > 0):
                     picked_move = randint(0, len(moves)-1)
                     self._game.move_champion(champions, moves[picked_move])
-                else:
-                    attack_choices = self._game.get_targets_in_range(champions)
-                    if len(attack_choices) > 0:
-                        picked_move = randint(0, len(attack_choices) - 1)
-                        self._game.attack(champions, attack_choices[picked_move])
-                    if self._game.is_AI_game:
-                        self._game.end_turn()
+
+                attack_choices = self._game.get_targets_in_range(champions)
+                if len(attack_choices) > 0:
+                    picked_move = randint(0, len(attack_choices) - 1)
+                    self._game.attack(champions, attack_choices[picked_move])
+
 
         else:
             pass

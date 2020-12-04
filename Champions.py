@@ -39,6 +39,10 @@ class Champion:
         self.update_stat_page()
 
     @property
+    def click_value(self):
+        return self._click_value
+
+    @property
     def action_tokens(self):
         return self._action_tokens
 
