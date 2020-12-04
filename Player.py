@@ -86,7 +86,7 @@ class Player:
         if self._currentPlayer is currentPlayer.AI:
             for champions in current_team:
                     if not champions.KO:
-                    moves = self._game.get_available_movement(champions)
+                        moves = self._game.get_available_movement(champions)
                     if(len(moves) > 0):
                         picked_move = randint(0, len(moves)-1)
                         self._game.move_champion(champions, moves[picked_move])
