@@ -122,16 +122,16 @@ class Board:
     def reset_board(self):
         i = 0
         for champions in self._red_team:
-            champions.set_position((i, 0))
+            self.get_tile(champions.position).set_champion(None)
+            self.get_tile((i, 0)).set_champion(champions)
             champions.reset_champion()
             i += 1
         i = 13
         for champions in self._blue_team:
-            champions.set_position((i, 15))
+            self.get_tile(champions.position).set_champion(None)
+            self.get_tile((i, 15)).set_champion(champions)
             champions.reset_champion()
             i += 1
-        for champions in self._red_team + self._blue_team:
-            self.get_tile(champions.position).set_champion(champions)
 
     def setup_board(self):
         cols = 16

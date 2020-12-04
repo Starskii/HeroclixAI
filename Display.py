@@ -121,7 +121,7 @@ class Display:
             self._game.move_champion(self.selected_champion, t)
 
     def middle_mouse_button_event(self):
-        self._game.reset_game()
+        self._game.end_turn()
 
     def highlight_possible_moves(self):
         for tiles in self._game.get_available_movement(self.selected_champion):
@@ -153,11 +153,11 @@ class Display:
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     # left mouse button
-                    # self.left_mouse_button_event()
-                    run = False
+                    self.left_mouse_button_event()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
                     # middle mouse button
-                    self.middle_mouse_button_event()
+                    self._game.end_turn()
+                    run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                     # right mouse button
                     self.right_mouse_button_event()

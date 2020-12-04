@@ -76,22 +76,23 @@ class Player:
         self._board = board
 
     def make_move(self):
-        if self._game.current_turn == self._game.Team.RED_TEAM:
-            current_team = self._board.red_team
+        if self._game.current_team_is_red():
+            current_team = None
         else:
             current_team = self._board.blue_team
 
-        for champions in current_team:
-            if not champions.KO:
-                moves = self._game.get_available_movement(champions)
-                if(len(moves) > 0):
-                    picked_move = randint(0, len(moves)-1)
-                    self._game.move_champion(champions, moves[picked_move])
-                else:
-                    if self._game.game_broken():
-                        self._game.reset_game()
-                attack_choices = self._game.get_targets_in_range(champions)
-                if len(attack_choices) > 0:
-                    picked_move = randint(0, len(attack_choices) - 1)
-                    self._game.attack(champions, attack_choices[picked_move])
-        self._game.end_turn()
+        if current_team is not None:
+            for champions in current_team:
+                if not champions.KO:
+                    moves = self._game.get_available_movement(champions)
+                    if(len(moves) > 0):
+                        picked_move = randint(0, len(moves)-1)
+                        self._game.move_champion(champions, moves[picked_move])
+                    else:
+                        if self._game.game_broken():
+                            self._game.reset_game()
+                    attack_choices = self._game.get_targets_in_range(champions)
+                    if len(attack_choices) > 0:
+                        picked_move = randint(0, len(attack_choices) - 1)
+                        self._game.attack(champions, attack_choices[picked_move])
+            self._game.end_turn()

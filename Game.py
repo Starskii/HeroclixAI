@@ -15,8 +15,8 @@ class Team(Enum):
 
 class Game:
     _board = Board()
-    _current_turn = Team.RED_TEAM
-    _display_on = False
+    _current_turn = Team.RED_TEAM.value
+    _display_on = True
     _display = None
     _player = None
     _is_AI = True
@@ -59,6 +59,12 @@ class Game:
         self._player = Player(self, self._board)
         self._display = Display(self._board, self)
         self.run_game()
+
+    def current_team_is_red(self):
+        if self._current_turn == Team.RED_TEAM:
+            return True
+        else:
+            return False
 
     def reset_game(self):
         self._board.reset_board()
