@@ -155,11 +155,19 @@ class Display:
 
     def display_teams(self):
         for champions in self.BOARD.red_team:
-            champImg = pygame.image.load(champions.image)
-            self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
+            if not champions.KO:
+                champImg = pygame.image.load(champions.image)
+                self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
+            else:
+                self.BOARD.get_tile(champions.position).set_champion(None)
+                self.BOARD.red_team.remove(champions)
         for champions in self.BOARD.blue_team:
-            champImg = pygame.image.load(champions.image)
-            self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
+            if not champions.KO:
+                champImg = pygame.image.load(champions.image)
+                self.WINDOW.blit(champImg, self.get_tile_pixel_location(champions.position))
+            else:
+                self.BOARD.get_tile(champions.position).set_champion(None)
+                self.BOARD.red_team.remove(champions)
 
     def run(self):
         run = self._game.display_on

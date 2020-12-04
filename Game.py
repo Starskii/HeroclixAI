@@ -70,6 +70,12 @@ class Game:
         else:
             return self._board.blue_team
 
+    def get_enemy_team(self):
+        if self._current_turn is Team.RED_TEAM:
+            return self._board.blue_team
+        else:
+            return self._board.red_team
+
     def reset_game(self):
         self._board.reset_board()
         self._current_turn = Team.RED_TEAM
@@ -210,12 +216,14 @@ class Game:
                 self._display.run()
             self._player.make_move()
             run = not self.check_win()
+            self.end_turn()
         if self._current_turn == Team.RED_TEAM:
             red_wins += 1
         else:
             blue_wins += 1
         print("Red: " + str(red_wins) + ", Blue: " + str(blue_wins))
         self.reset_game()
+
 
 
 

@@ -83,13 +83,26 @@ class Player:
     def make_move(self):
         current_team = self._game.get_current_team()
         self._currentPlayer = self._game.get_current_player()
+        enemy_team = self._game.get_enemy_team()
+        target = None
+        for enemy in enemy_team:
+            if not enemy.KO:
+                target = enemy
         if self._currentPlayer is currentPlayer.AI:
             for champions in current_team:
                 if not champions.KO:
                     moves = self._game.get_available_movement(champions)
+                min = 10000
+                chosen_move = None
                 if(len(moves) > 0):
-                    picked_move = randint(0, len(moves)-1)
-                    self._game.move_champion(champions, moves[picked_move])
+                    for move in moves:
+                        if enemy is not None:
+                            xdif = abs(move.position[0] - enemy.position[0])
+                            ydif = abs(move.position[1] - enemy.position[1])
+                            if xdif+ydif < min:
+                                min = xdif+ydif
+                                chosen_move = move
+                    self._game.move_champion(champions, chosen_move)
 
                 attack_choices = self._game.get_targets_in_range(champions)
                 if len(attack_choices) > 0:
